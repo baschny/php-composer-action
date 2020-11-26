@@ -1,4 +1,4 @@
-baschny/action-php-composer
+baschny/php-composer-action
 ===========================
 
 This GitHub action allows to run the latest composer on your source code.
@@ -47,7 +47,7 @@ jobs:
 
       - name: Get composer cache directory
         id: composer_config
-        uses: baschny/action-php-composer
+        uses: baschny/php-composer-action@v1
         with:
           composer_version: ${{ env.COMPOSER_VERSION }}
           command: get_config
@@ -59,7 +59,7 @@ jobs:
           key: composer-v${{ steps.composer_config.outputs.composer_major_version }}
 
       - name: Run composer install
-        uses: baschny/action-php-composer
+        uses: baschny/php-composer-action@v1
         with:
           composer_version: ${{ env.COMPOSER_VERSION }}
           command: install
