@@ -58,9 +58,9 @@ runs:
         echo "::set-output name=composer_major_version::${DETECTED_MAJOR_VERSION}"
         echo "::set-output name=composer_version::${DETECTED_VERSION}"
 
+        COMPOSER_DOCKER="docker run --rm --user 1001 --volume ${RUNNER_WORKSPACE}/composer:/tmp --volume ${GITHUB_WORKSPACE}:/app -w /app composer:${COMPOSER_VERSION}"
         if [ "$GITHUB_OAUTH" ]; then
-          docker run --rm --volume ${RUNNER_WORKSPACE}/composer:/tmp \
-            composer:${COMPOSER_VERSION} config -g github-oauth.github.com $GITHUB_OAUTH
+          $COMPOSER_DOCKER config -g github-oauth.github.com $GITHUB_OAUTH
         fi
 
         case "${COMPOSER_COMMAND}" in
@@ -70,11 +70,7 @@ runs:
 
           *)
             echo "Running composer v${DETECTED_VERSION} with: $COMPOSER_COMMAND $COMPOSER_ARGS"
-            docker run --rm \
-              --volume ${RUNNER_WORKSPACE}/composer:/tmp \
-              --volume ${GITHUB_WORKSPACE}:/app \
-              -w /app \
-              composer:${COMPOSER_VERSION} $COMPOSER_COMMAND $COMPOSER_ARGS
+            $COMPOSER_DOCKER $COMPOSER_COMMAND $COMPOSER_ARGS
             ;;
         esac
 
