@@ -17,6 +17,11 @@ inputs:
     required: false
     default: "--optimize-autoloader --no-progress"
 
+  github_oauth:
+    description: "OAuth token for accessing github private resources"
+    required: false
+    default: ""
+
 outputs:
   composer_cache_dir:
     description: "Where composer created its cache"
@@ -37,6 +42,7 @@ runs:
         COMPOSER_VERSION: ${{ inputs.composer_version }}
         COMPOSER_COMMAND: ${{ inputs.command }}
         COMPOSER_ARGS: ${{ inputs.args }}
+        GITHUB_OAUTH: ${{ inputs.github_oauth }}
       shell: bash
       id: composer_run
       run: |
@@ -51,6 +57,11 @@ runs:
         echo "::set-output name=composer_cache_dir::${RUNNER_WORKSPACE}/composer/cache"
         echo "::set-output name=composer_major_version::${DETECTED_MAJOR_VERSION}"
         echo "::set-output name=composer_version::${DETECTED_VERSION}"
+
+        if [ "$GITHUB_OAUTH" ]; then
+          docker run --rm --volume ${RUNNER_WORKSPACE}/composer:/tmp \
+            composer:${COMPOSER_VERSION} config -g github-oauth.github.com $GITHUB_OAUTH
+        fi
 
         case "${COMPOSER_COMMAND}" in
           get_config)

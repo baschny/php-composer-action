@@ -16,6 +16,9 @@ Input
 
 * `args`: Other command line arguments to pass to composer, defaults to `--optimize-autoloader --no-progress`
 
+* `github_oauth`: If your composer needs access to a private repo, configure the github OAuth token to use here.
+   For example it could come from a secret, i.e. `secrets.GITHUB_OAUTH`.
+
 Output
 ------
 * `composer_cache_dir`: where the composer cache is located, in case you want to use `actions/cache`
@@ -63,6 +66,7 @@ jobs:
         with:
           composer_version: ${{ env.COMPOSER_VERSION }}
           command: install
+          #github_oauth: ${{ secret.GITHUB_OAUTH }}
 ```
 
 License
